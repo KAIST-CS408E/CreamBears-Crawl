@@ -1,0 +1,70 @@
+import scala.collection.mutable.{Map => MMap}
+
+import java.nio.file.{Paths, Files}
+
+import org.scalatest._
+
+import ConnectUtil._
+import LoginUtil._
+import CrawlUtil._
+import SearchUtil._
+
+class CrawlSpec extends FlatSpec with Matchers {
+  private implicit val cookies: Cookie = MMap()
+  private val board = "student_notice"
+  private val id = "11537235408097"
+  private val title =
+    "2018글로벌기술사업화 워크샵 행사 준비를 지원할 학생을 모집합니다."
+  private val author = "이백훈"
+  private val department = "글로벌기술사업화센터"
+  private val time = "2018.09.18 10:50:08"
+  private val hits = 238
+  private val files =
+    List("2018글로벌기술사업화워크샵_지원요원_지원서양식.hwp")
+  private val links = List("/board/fileMngr?cmd=down&boardId=student_notice&bltnNo=11537235408097&fileSeq=1&subId=sub06")
+  private val content = "글로벌기술사업화센터에서는"
+  private val images = List[String]()
+  private val keyword = "수강신청"
+
+  "Login Config" should "exists" in {
+    Files.exists(Paths.get(confPath)) shouldEqual true
+  }
+
+  "Login" should "succeeds" in {
+    login
+    cookies.isDefinedAt("__smVisitorID") shouldEqual true
+    cookies.isDefinedAt("EnviewSessionID") shouldEqual true
+    cookies.isDefinedAt("evSSOCookie") shouldEqual true
+    cookies.isDefinedAt("ObSSOCookie") shouldEqual true
+    cookies.isDefinedAt("JSESSIONID") shouldEqual true
+  }
+
+  "Max pages of boards" should "be obtained" in {
+    getMax(board).size shouldEqual 1
+  }
+
+  "Number of articles per a page" should "be 15" in {
+    getIds(board, 1).size shouldEqual 15
+  }
+
+  "Articles" should "be obtained correctly" in {
+    val article = getArticle(board, id).get
+    article.board shouldEqual board
+    article.id shouldEqual id
+    article.title shouldEqual title
+    article.author shouldEqual author
+    article.department shouldEqual department
+    (article.hits >= hits) shouldEqual true
+    article.files shouldEqual files
+    article.fileList.get(0) shouldEqual files(0)
+    article.links shouldEqual links
+    article.linkList.get(0) shouldEqual links(0)
+    article.content.substring(0, content.length) shouldEqual content
+    article.images shouldEqual images
+    article.imageList.size() shouldEqual images.length
+  }
+
+  "Search" should "succeeds" in {
+    search(keyword, 1).size shouldEqual 10
+  }
+}
