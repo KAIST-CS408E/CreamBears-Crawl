@@ -1,3 +1,5 @@
+package services.xis.crawl
+
 case class SearchResult(
   title: String,
   preview: String,

@@ -1,3 +1,5 @@
+package services.xis.crawl
+
 import scala.collection.mutable.{Map => MMap}
 
 import java.nio.file.{Paths, Files}

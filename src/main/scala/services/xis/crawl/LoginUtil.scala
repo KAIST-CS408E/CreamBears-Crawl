@@ -1,3 +1,5 @@
+package services.xis.crawl
+
 import scala.collection.mutable.Buffer
 import scala.io.Source
 

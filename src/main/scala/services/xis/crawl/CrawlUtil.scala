@@ -1,3 +1,5 @@
+package services.xis.crawl
+
 import ConnectUtil._
 
 import net.ruippeixotog.scalascraper.dsl.DSL._

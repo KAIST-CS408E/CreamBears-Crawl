@@ -1,3 +1,5 @@
+package services.xis.crawl
+
 import scala.collection.mutable.{Map => MMap, Buffer}
 import scala.collection.JavaConverters
 
