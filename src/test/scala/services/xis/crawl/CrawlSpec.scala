@@ -41,8 +41,16 @@ class CrawlSpec extends FlatSpec with Matchers {
     cookies.isDefinedAt("JSESSIONID") shouldEqual true
   }
 
+  "Max page of the today board" should "be obtained" in {
+    getMaxOfToday().size shouldEqual 1
+  }
+
   "Max pages of boards" should "be obtained" in {
     getMax(board).size shouldEqual 1
+  }
+
+  "Number of articles per a today board's page" should "be 15" in {
+    getIdsFromToday(1).size shouldEqual 15
   }
 
   "Number of articles per a page" should "be 15" in {

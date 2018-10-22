@@ -11,6 +11,7 @@ object CrawlUtil {
 
   private val boardUrl = "https://portal.kaist.ac.kr/board/list.brd"
   private val articleUrl = "https://portal.kaist.ac.kr/board/read.brd"
+  private val todayBoard = "today_notice"
 
   private def getBoard(
     board: String, index: Int
@@ -35,14 +36,34 @@ object CrawlUtil {
     }
   }
 
+  def getMaxOfToday()(implicit cookie: Cookie): Option[Int] =
+    getMax(todayBoard)
+
+  private def getIdsCommon[T](
+    board: String, index: Int, key: String, cb: String => T
+  )(implicit cookie: Cookie): List[T] = {
+    val doc = getBoard(board, index)
+    (doc >> elementList("a") >?> (_ >> attr("href")("a")))
+      .flatten.filter(_.contains(key)).map(cb)
+  }
+
   def getIds(
     board: String, index: Int
   )(implicit cookie: Cookie): List[String] = {
-    val doc = getBoard(board, index)
     val key = s"/ennotice/${board}/"
-    (doc >> elementList("a") >?> (_ >> attr("href")("a")))
-      .flatten.filter(_.contains(key))
-      .map(s => s.substring(key.length, s.length))
+    getIdsCommon(board, index, key,
+      s => s.substring(key.length, s.length))
+  }
+
+  def getIdsFromToday(
+    index: Int
+  )(implicit cookie: Cookie): List[(String, String)] = {
+    val key = "/ennotice/"
+    getIdsCommon(todayBoard, index, key, s => {
+      val s0 = s.substring(key.length)
+      val i = s0.indexOf("/")
+      (s0.substring(0, i), s0.substring(i + 1))
+    })
   }
 
   def getArticle(
