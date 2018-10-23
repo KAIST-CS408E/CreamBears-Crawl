@@ -8,6 +8,8 @@ import javax.net.ssl.HttpsURLConnection
 import java.io.{DataInputStream, DataOutputStream}
 import java.util.Scanner
 
+import org.apache.commons.io.IOUtils
+
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.model.Document
 
@@ -32,16 +34,31 @@ object ConnectUtil {
     con
   }
 
-  def get(
+  private def getCommon(
     url: String, query: Map[String, String] = Map()
-  )(implicit cookie: Cookie): Result = {
+  )(implicit cookie: Cookie): HttpsURLConnection = {
     val qStr = query.map{ 
       case (k, v) => s"${k}=${URLEncoder.encode(v, "UTF-8")}"
     }.mkString("&")
     val con = init(s"${url}${if (qStr.isEmpty) "" else "?"}${qStr}")
     con.setRequestMethod("GET")
     con.setDoOutput(false)
-    res(con)
+    con
+  }
+
+  def get(
+    url: String, query: Map[String, String] = Map()
+  )(implicit cookie: Cookie): Result = res(getCommon(url, query))
+
+  def getRaw(
+    url: String, query: Map[String, String] = Map()
+  )(implicit cookie: Cookie): Array[Byte] = {
+    val con = getCommon(url, query)
+    val input = new DataInputStream(con.getInputStream)
+    val res = IOUtils.toByteArray(input)
+    input.close
+    con.disconnect
+    res
   }
 
   def post(

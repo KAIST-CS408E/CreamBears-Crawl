@@ -9,5 +9,6 @@ lazy val root = (project in file(".")).
     )),
     name := "kaist-portal-crawl",
     libraryDependencies += scalaTest % Test,
-    libraryDependencies += "net.ruippeixotog" %% "scala-scraper" % "2.1.0"
+    libraryDependencies += "net.ruippeixotog" %% "scala-scraper" % "2.1.0",
+    libraryDependencies += "commons-io" % "commons-io" % "2.6"
   )
