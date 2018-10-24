@@ -3,7 +3,7 @@
 ## How to use
 * Add the following line to your `project/Dependencies` file.
 ```scala
-lazy val crawler = RootProject(uri("git://github.com/CreamBears/kaist-portal-crawl.git"))
+lazy val crawler = RootProject(uri("git://github.com/KAIST-CS408E/CreamBears-Crawl.git"))
 ```
 * Modify your `build.sbt` file like the following:
 ```scala
