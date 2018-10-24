@@ -30,13 +30,14 @@ implicit val cookies: Cookie = MMap() // cookies
 login // login
 
 val max: Int = getMaxOfToday().get // Max page of today_notice
-val ids: List[(String, String)] = getIdsFromToday(1) // Page 1 of today_notice
-val board: String = ids(0)._1 // Board of the latest article
-val id: String = ids(0)._2 // Id of the latest article
+val ids: List[ArticleSummary] = getSummariesFromToday(1) // Page 1 of today_notice
+val board: String = ids(0).board // Board of the latest article
+val id: String = ids(0).id // Id of the latest article
+val hits: String = ids(0).hits // Hits of the latest article
 val article: Article = getArticle(board, id).get // The latest article
 
-val link = "https://some.url"
-val data: Array[Byte] = getRaw(link) // Data of the file
+val link = "https://portal.kaist.ac.kr/some/file"
+val data: Array[Byte] = getFile(link) // Data of the file
 ```
 
 ## How to test

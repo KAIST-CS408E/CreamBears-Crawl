@@ -28,6 +28,7 @@ class CrawlSpec extends FlatSpec with Matchers {
   private val images = List[String]()
   private val keyword = "수강신청"
   private val file = "https://portal.kaist.ac.kr/board/upload/editor/student_notice/T201810231540283340148_png"
+  private val filePostfix = "/board/upload/editor/student_notice/T201810231540283340148_png"
 
   "Login Config" should "exists" in {
     Files.exists(Paths.get(confPath)) shouldEqual true
@@ -51,11 +52,11 @@ class CrawlSpec extends FlatSpec with Matchers {
   }
 
   "Number of articles per a today board's page" should "be 15" in {
-    getIdsFromToday(1).size shouldEqual 15
+    getSummariesFromToday(1).size shouldEqual 15
   }
 
   "Number of articles per a page" should "be 15" in {
-    getIds(board, 1).size shouldEqual 15
+    getSummaries(board, 1).size shouldEqual 15
   }
 
   "Articles" should "be obtained correctly" in {
@@ -80,6 +81,7 @@ class CrawlSpec extends FlatSpec with Matchers {
   }
 
   "File" should "be obtained" in {
-    getRaw(file).length shouldEqual 1549752
+    getFile(file).length shouldEqual 1549752
+    getFile(file).length shouldEqual 1549752
   }
 }

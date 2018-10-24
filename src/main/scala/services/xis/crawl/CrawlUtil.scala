@@ -12,6 +12,7 @@ object CrawlUtil {
   private val boardUrl = "https://portal.kaist.ac.kr/board/list.brd"
   private val articleUrl = "https://portal.kaist.ac.kr/board/read.brd"
   private val todayBoard = "today_notice"
+  private val fileUrl = "https://portal.kaist.ac.kr"
 
   private def getBoard(
     board: String, index: Int
@@ -39,32 +40,33 @@ object CrawlUtil {
   def getMaxOfToday()(implicit cookie: Cookie): Option[Int] =
     getMax(todayBoard)
 
-  private def getIdsCommon[T](
-    board: String, index: Int, key: String, cb: String => T
-  )(implicit cookie: Cookie): List[T] = {
-    val doc = getBoard(board, index)
-    (doc >> elementList("a") >?> (_ >> attr("href")("a")))
-      .flatten.filter(_.contains(key)).map(cb)
-  }
-
-  def getIds(
+  def getSummaries(
     board: String, index: Int
-  )(implicit cookie: Cookie): List[String] = {
-    val key = s"/ennotice/${board}/"
-    getIdsCommon(board, index, key,
-      s => s.substring(key.length, s.length))
-  }
+  )(implicit cookie: Cookie): List[ArticleSummary] = {
+    val doc = getBoard(board, index)
 
-  def getIdsFromToday(
-    index: Int
-  )(implicit cookie: Cookie): List[(String, String)] = {
     val key = "/ennotice/"
-    getIdsCommon(todayBoard, index, key, s => {
+    def parse(s: String): (String, String) = {
       val s0 = s.substring(key.length)
       val i = s0.indexOf("/")
       (s0.substring(0, i), s0.substring(i + 1))
-    })
+    }
+
+    val bids = (doc >> elementList("a") >?> (_ >> attr("href")("a")))
+      .flatten.filter(_.contains(key)).map(parse)
+    val hitsList = (doc >> elementList("tr"))
+      .map(_ >> elementList("td"))
+      .filter(_.length == 5)
+      .map(_(3) >> allText("td"))
+
+    (bids zip hitsList).map{
+      case ((b, id), hits) => ArticleSummary(b, id, hits.toInt)
+    }
   }
+
+  def getSummariesFromToday(index: Int)
+    (implicit cookie: Cookie): List[ArticleSummary] =
+    getSummaries(todayBoard, index)
 
   def getArticle(
     board: String, id: String
@@ -93,4 +95,10 @@ object CrawlUtil {
       case _ => None
     }
   }
+
+  def getFile(path: String)(implicit cookie: Cookie): Array[Byte] =
+    getRaw(
+      if (path startsWith fileUrl) path
+      else s"$fileUrl$path"
+    )
 }
