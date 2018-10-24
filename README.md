@@ -42,7 +42,7 @@ val data: Array[Byte] = getRaw(link) // Data of the file
 ## How to test
 ```shell
 $ git clone https://github.com/KAIST-CS408E/CreamBears-Crawl.git
-$ cd kaist-portal-crawl
+$ cd CreamBears-Crawl
 $ echo [id] > login.conf
 $ echo [password] >> login.conf
 $ sbt test
