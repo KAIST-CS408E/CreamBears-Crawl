@@ -1,4 +1,4 @@
-# kaist-portal-crawl
+# xIS-crawler
 
 ## How to use
 * Add the following line to your `project/Dependencies` file.
@@ -41,7 +41,7 @@ val data: Array[Byte] = getRaw(link) // Data of the file
 
 ## How to test
 ```shell
-$ git clone https://github.com/CreamBears/kaist-portal-crawl.git
+$ git clone https://github.com/KAIST-CS408E/CreamBears-Crawl.git
 $ cd kaist-portal-crawl
 $ echo [id] > login.conf
 $ echo [password] >> login.conf
