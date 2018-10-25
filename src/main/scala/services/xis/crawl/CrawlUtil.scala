@@ -79,19 +79,28 @@ object CrawlUtil {
       if (start < 0 || end < 0) (au, "")
       else (au.substring(0, start), au.substring(start + 1, end))
     }
+    def makeArticle(
+      tit: Element, aut: Element, tim: Element, att: Element, con: Element
+    ): Article = {
+      val title = tit >> allText("td")
+      val (author, department) = parse(aut >> allText("td"))
+      val (time, hits) = parse(tim >> allText("td"))
+      val files =
+        (att >> elementList(".req_file") >?> allText("a")).flatten
+      val links =
+        (att >> elementList(".req_file") >?> attr("href")("a")).flatten
+      val content = con >> allText("td")
+      val images = (con >> elementList("img") >?> attr("src")("img")).flatten
+      Article(board, id, title, author, department,
+        time, hits.toInt, files, links, content, images)
+    }
+
+    val special = Set("work_notice", "seminar_events")
     (doc >> elementList("tbody")).head >> elementList("td") match {
+      case tit :: _ :: _ :: aut :: tim :: att :: con :: _ if special(board) =>
+        Some(makeArticle(tit, aut, tim, att, con))
       case tit :: aut :: tim :: att :: con :: _ =>
-        val title = tit >> allText("td")
-        val (author, department) = parse(aut >> allText("td"))
-        val (time, hits) = parse(tim >> allText("td"))
-        val files =
-          (att >> elementList(".req_file") >?> allText("a")).flatten
-        val links =
-          (att >> elementList(".req_file") >?> attr("href")("a")).flatten
-        val content = con >> allText("td")
-        val images = (con >> elementList("img") >?> attr("src")("img")).flatten
-        Some(Article(board, id, title, author, department,
-          time, hits.toInt, files, links, content, images))
+        Some(makeArticle(tit, aut, tim, att, con))
       case _ => None
     }
   }
