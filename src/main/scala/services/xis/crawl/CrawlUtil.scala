@@ -13,6 +13,7 @@ object CrawlUtil {
   private val articleUrl = "https://portal.kaist.ac.kr/board/read.brd"
   private val todayBoard = "today_notice"
   private val fileUrl = "https://portal.kaist.ac.kr"
+  private val fileUrlPrefix = "http"
 
   private def getBoard(
     board: String, index: Int
@@ -107,7 +108,7 @@ object CrawlUtil {
 
   def getFile(path: String)(implicit cookie: Cookie): Array[Byte] =
     getRaw(
-      if (path startsWith fileUrl) path
+      if (path startsWith fileUrlPrefix) path
       else s"$fileUrl$path"
     )
 }
