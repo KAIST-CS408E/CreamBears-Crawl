@@ -3,8 +3,7 @@ package services.xis.crawl
 import scala.collection.mutable.{Map => MMap, Buffer}
 import scala.collection.JavaConverters
 
-import java.net.{URL, URLEncoder}
-import javax.net.ssl.HttpsURLConnection
+import java.net.{URL, URLEncoder, HttpURLConnection}
 import java.io.{DataInputStream, DataOutputStream}
 import java.util.Scanner
 
@@ -23,8 +22,8 @@ object ConnectUtil {
     "Content-Type" -> "application/x-www-form-urlencoded"
   )
 
-  private def init(url: String)(implicit cookie: Cookie): HttpsURLConnection = {
-    val con = (new URL(url)).openConnection.asInstanceOf[HttpsURLConnection]
+  private def init(url: String)(implicit cookie: Cookie): HttpURLConnection = {
+    val con = (new URL(url)).openConnection.asInstanceOf[HttpURLConnection]
     commonHeader.foreach{ case (k, v) => con.setRequestProperty(k, v) }
     con.setRequestProperty("Cookie",
       cookie.map{ case (k, v) => s"${k}=${v}" }.mkString("; "))
@@ -36,7 +35,7 @@ object ConnectUtil {
 
   private def getCommon(
     url: String, query: Map[String, String] = Map()
-  )(implicit cookie: Cookie): HttpsURLConnection = {
+  )(implicit cookie: Cookie): HttpURLConnection = {
     val qStr = query.map{ 
       case (k, v) => s"${k}=${URLEncoder.encode(v, "UTF-8")}"
     }.mkString("&")
@@ -78,7 +77,7 @@ object ConnectUtil {
     res(con)
   }
 
-  private def res(con: HttpsURLConnection): Result = {
+  private def res(con: HttpURLConnection): Result = {
     val input = new DataInputStream(con.getInputStream)
     val scanner = new Scanner(input, "utf-8").useDelimiter("\\A")
     val content = scanner.next

@@ -35,6 +35,7 @@ class CrawlSpec extends FlatSpec with Matchers {
   private val specialBoard1 = "seminar_events"
   private val specialId1 = "11540368178139"
   private val specialHits1 = 15
+  private val httpFile = "http://www.webworker.co.kr/images/letter/KSW_letter_0603.jpg"
 
   "Login Config" should "exists" in {
     Files.exists(Paths.get(confPath)) shouldEqual true
@@ -88,7 +89,7 @@ class CrawlSpec extends FlatSpec with Matchers {
 
   "File" should "be obtained" in {
     getFile(file).length shouldEqual 1549752
-    getFile(file).length shouldEqual 1549752
+    getFile(filePostfix).length shouldEqual 1549752
   }
 
   "Articles in special boards" should "be obtained correctly" in {
@@ -96,5 +97,9 @@ class CrawlSpec extends FlatSpec with Matchers {
     (article0.hits >= specialHits0) shouldEqual true
     val article1 = getArticle(specialBoard1, specialId1).get
     (article1.hits >= specialHits1) shouldEqual true
+  }
+
+  "HTTP file" should "be obtained" in {
+    getFile(httpFile).length shouldEqual 119831
   }
 }
