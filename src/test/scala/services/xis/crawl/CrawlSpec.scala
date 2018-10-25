@@ -29,6 +29,12 @@ class CrawlSpec extends FlatSpec with Matchers {
   private val keyword = "수강신청"
   private val file = "https://portal.kaist.ac.kr/board/upload/editor/student_notice/T201810231540283340148_png"
   private val filePostfix = "/board/upload/editor/student_notice/T201810231540283340148_png"
+  private val specialBoard0 = "work_notice"
+  private val specialId0 = "11536792030689"
+  private val specialHits0 = 367
+  private val specialBoard1 = "seminar_events"
+  private val specialId1 = "11540368178139"
+  private val specialHits1 = 15
 
   "Login Config" should "exists" in {
     Files.exists(Paths.get(confPath)) shouldEqual true
@@ -83,5 +89,12 @@ class CrawlSpec extends FlatSpec with Matchers {
   "File" should "be obtained" in {
     getFile(file).length shouldEqual 1549752
     getFile(file).length shouldEqual 1549752
+  }
+
+  "Articles in special boards" should "be obtained correctly" in {
+    val article0 = getArticle(specialBoard0, specialId0).get
+    (article0.hits >= specialHits0) shouldEqual true
+    val article1 = getArticle(specialBoard1, specialId1).get
+    (article1.hits >= specialHits1) shouldEqual true
   }
 }
