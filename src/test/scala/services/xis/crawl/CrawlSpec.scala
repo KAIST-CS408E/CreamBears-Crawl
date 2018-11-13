@@ -27,6 +27,8 @@ class CrawlSpec extends FlatSpec with Matchers {
   private val content = "글로벌기술사업화센터에서는"
   private val images = List[String]()
   private val keyword = "수강신청"
+  private val start = "20181101"
+  private val end = "20181107"
   private val file = "https://portal.kaist.ac.kr/board/upload/editor/student_notice/T201810231540283340148_png"
   private val filePostfix = "/board/upload/editor/student_notice/T201810231540283340148_png"
   private val specialBoard0 = "work_notice"
@@ -85,6 +87,7 @@ class CrawlSpec extends FlatSpec with Matchers {
 
   "Search" should "succeeds" in {
     search(keyword, 1).size shouldEqual 10
+    search(keyword, start, end, 1).size shouldEqual 5
   }
 
   "File" should "be obtained" in {

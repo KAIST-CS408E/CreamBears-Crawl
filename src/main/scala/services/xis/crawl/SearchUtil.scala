@@ -10,11 +10,9 @@ import net.ruippeixotog.scalascraper.model._
 object SearchUtil {
   private val url = "https://search.kaist.ac.kr/index.jsp"
 
-  def search(
-    keyword: String, index: Int
-  )(implicit cookie: Cookie): List[SearchResult] = {
-    val doc = get(url, Map("searchTerm" -> keyword,
-      "searchTarget" -> "portal", "currentPage" -> index.toString))._1
+  private def search1(
+    doc: Document, index: Int
+  )(implicit cookie: Cookie): List[SearchResult] =
     doc >> elementList(".section_body") match {
       case body :: _ =>
         val subjects = (body >> elementList(".subject"))
@@ -31,5 +29,24 @@ object SearchUtil {
         }
       case Nil => List()
     }
-  }
+
+  def search(
+    keyword: String, index: Int
+  )(implicit cookie: Cookie): List[SearchResult] =
+    search1(
+      get(url, Map("searchTerm" -> keyword,
+        "searchTarget" -> "portal", "currentPage" -> index.toString))._1,
+      index
+    )
+
+  def search(
+    keyword: String, start: String, end: String, index: Int
+  )(implicit cookie: Cookie): List[SearchResult] =
+    search1(
+      get(url, Map("searchTerm" -> keyword,
+        "searchTarget" -> "portal", "currentPage" -> index.toString,
+        "searchDate" -> "input", "searchStartDate" -> start,
+        "searchEndDate" -> end))._1,
+      index
+    )
 }
